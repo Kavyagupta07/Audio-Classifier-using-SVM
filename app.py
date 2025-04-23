@@ -12,9 +12,9 @@ app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # 5MB limit
 
 # Load trained model and scaler
 # model = load('dataset\models\audio_classifier.joblib')
-model = load('dataset/models/audio_classifier.joblib')
+model = load('models/audio_classifier.joblib')
 # scaler = load('dataset\models\scaler.joblib')
-scaler = load('dataset/models/scaler.joblib')
+scaler = load('models/scaler.joblib')
 CLASSES = ["speech", "music", "noise"]
 
 # Feature extraction (same as training)
