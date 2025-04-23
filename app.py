@@ -120,11 +120,11 @@ def home():
     
     return render_template('index.html')
 
-    return render_template('result.html', 
-                       result=result.upper(),
-                       confidence=f"{confidence*100:.1f}%",
-                       filename=filename)
-    return render_template('error.html', message="Error processing audio file")
+    # return render_template('result.html', 
+                       # result=result.upper(),
+                       # confidence=f"{confidence*100:.1f}%",
+                       # filename=filename)
+    # return render_template('error.html', message="Error processing audio file")
 
 # HTML Templates with Dark Theme
 app.jinja_env.globals.update(
