@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Error</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #2a2a2a;
+      color: #f8d7da;
+    }
+    .container {
+      max-width: 600px;
+      margin-top: 60px;
+    }
+    .card {
+      background-color: #3a3a3a;
+      border: 1px solid #842029;
+      padding: 30px;
+    }
+    .error-title {
+      font-size: 2rem;
+      color: #f8d7da;
+    }
+    .error-msg {
+      color: #f5c2c7;
+      font-size: 1.2rem;
+    }
+    .btn-custom {
+      background-color: #dc3545;
+      border-color: #bb2d3b;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="container text-center">
+    <div class="card">
+      <h1 class="error-title">⚠️ Oops! Something went wrong.</h1>
+      <p class="error-msg mt-3">{{ message }}</p>
+      <div class="mt-4">
+        <a href="/" class="btn btn-custom w-100">🔁 Try Again</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

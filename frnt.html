@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Audio Classifier</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer>
+    let mediaRecorder;
+    let audioChunks = [];
+
+    async function startListening() {
+      document.getElementById("status").textContent = "🎙️ I am listening...";
+      document.getElementById("result").textContent = "";
+
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaRecorder = new MediaRecorder(stream);
+
+      mediaRecorder.ondataavailable = (e) => {
+        audioChunks.push(e.data);
+      };
+
+      mediaRecorder.onstop = async () => {
+        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+        audioChunks = [];
+
+        const formData = new FormData();
+        formData.append('audio', audioBlob);
+
+        try {
+          const res = await fetch('/classify', {
+            method: 'POST',
+            body: formData,
+          });
+
+          const data = await res.json();
+          document.getElementById("result").textContent = `🧠 Detected: ${data.label}`;
+        } catch (err) {
+          console.error(err);
+          document.getElementById("result").textContent = "❌ Error classifying audio.";
+        }
+      };
+
+      mediaRecorder.start();
+    }
+
+    function stopListening() {
+      document.getElementById("status").textContent = "🛑 Stopped listening.";
+      mediaRecorder.stop();
+    }
+
+    function toggleModal(show) {
+      const modal = document.getElementById("infoModal");
+      if (show) {
+        modal.classList.remove("hidden");
+        setTimeout(() => modal.classList.remove("opacity-0", "scale-95"), 10);
+      } else {
+        modal.classList.add("opacity-0", "scale-95");
+        setTimeout(() => modal.classList.add("hidden"), 200);
+      }
+    }
+  </script>
+</head>
+<body class="bg-[#2c2f33] text-gray-100 font-sans flex flex-col items-center min-h-screen relative">
+
+  <!-- Heading -->
+  <div class="text-center mt-8">
+    <h1 class="text-3xl font-bold mb-2">Check your Audio here</h1>
+    <!-- <img src="https://t4.ftcdn.net/jpg/12/03/38/15/360_F_1203381515_oW1D4J2G2zc9XGOJQfBZg9w0YZoJCOpE.jpg"> -->
+    <img src="https://t4.ftcdn.net/jpg/12/03/38/15/360_F_1203381515_oW1D4J2G2zc9XGOJQfBZg9w0YZoJCOpE.jpg" 
+    alt="Eagle Logo" 
+    class="w-16 h-16 rounded-full object-cover mx-auto shadow-md mb-4 border-2 border-white">
+
+  </div>
+
+  <!-- Main Container -->
+  <div class="bg-white text-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-md text-center animate-fadeIn">
+    <h1 class="text-2xl font-bold mb-6">🎧 Audio Classifier</h1>
+    <div class="space-x-4 mb-4">
+      <button onclick="startListening()" class="bg-green-500 text-white px-4 py-2 rounded-xl hover:bg-green-600 transition-all">Start Listening</button>
+      <button onclick="stopListening()" class="bg-red-500 text-white px-4 py-2 rounded-xl hover:bg-red-600 transition-all">Stop Listening</button>
+    </div>
+    <div id="status" class="text-blue-500 font-semibold my-4">Click start to begin</div>
+    <div id="result" class="bg-gray-200 p-4 rounded-xl text-lg font-medium text-gray-700 transition-all duration-300">Result will appear here</div>
+  </div>
+
+  <!-- Disclaimer -->
+  <div class="mt-8 mb-4 text-center text-sm text-gray-300">
+    This can make mistakes. <button onclick="toggleModal(true)" class="underline text-blue-400 hover:text-blue-300">(check important information)</button>
+  </div>
+
+  <!-- Modal -->
+  <div id="infoModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 hidden transition-all duration-300 opacity-0 scale-95">
+    <div class="bg-[#3b3f45] text-white p-6 rounded-xl shadow-xl w-full max-w-lg text-left relative">
+      <button onclick="toggleModal(false)" class="absolute top-3 right-4 text-gray-300 hover:text-white text-lg">&times;</button>
+      <h2 class="text-xl font-bold mb-4">🔍 Important Information</h2>
+      <ul class="list-disc pl-6 space-y-2 text-sm">
+        <li>This tool uses an SVM (Support Vector Machine) to classify audio.</li>
+        <li>It may misclassify sounds in noisy or unclear recordings.</li>
+        <li>Best results are with clear, isolated audio samples.</li>
+        <li>Model trained on limited data — real-world use may vary.</li>
+        <li>This is intended for testing/learning, not critical decisions.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Animations -->
+  <style>
+    .animate-fadeIn {
+      animation: fadeIn 0.6s ease-in-out both;
+    }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</body>
+</html>
