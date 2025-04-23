@@ -1,0 +1,7 @@
+Flask
+numpy
+librosa
+scikit-learn
+joblib
+werkzeug
+soundfile  # required by librosa for audio file loading
